@@ -8,17 +8,16 @@ const cors = require('cors');
 
 app.use(cors({ origin: 'http://localhost:3000',methods:"GET, POST, PUT, DELETE" }));
 
-const stripe = require("stripe")("sk_test_51OH5s7C4KDTg8h2C1U13Tz85ArOU5Yz98x4232v4jk5r9A3RXXuaYqDWRfwXZXdbxOHPlgN1Xf6uYq4l2rOJaWOk00pV7nked8", {
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-08-01",
 });
 
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(express.static("../client"));
+app.use(express.static(process.env.STATIC_DIR));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Origin', 'https://serverstripe.vercel.app');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
@@ -30,13 +29,13 @@ app.use((req, res, next) => {
 
 
 app.get("/", (req, res) => {
-  const path = resolve("../client" + "/index.html");
+  const path = resolve(process.env.STATIC_DIR + "/index.html");
   res.sendFile(path);
 });
 
 app.get("/config", (req, res) => {
   res.send({
-    publishableKey: "pk_test_51OH5s7C4KDTg8h2CVVDOWr7fndcY6lAYvdBS6jBpJeiXxuZ9nT7knFJxv7A9yCdFUTQuSvs9HevzT46jTxbmzfrb00TIHEplcl",
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
   });
 });
 
